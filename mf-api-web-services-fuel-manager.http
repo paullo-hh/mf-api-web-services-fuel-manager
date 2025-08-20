@@ -1,0 +1,6 @@
+@mf_api_web_services_fuel_manager_HostAddress = http://localhost:5285
+
+GET {{mf_api_web_services_fuel_manager_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
