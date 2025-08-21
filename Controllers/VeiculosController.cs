@@ -19,20 +19,42 @@ namespace mf_api_web_services_fuel_manager.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            //return await _context.Veiculos.Include(v => v.Consumos).ToListAsync();
             return Ok(await _context.Veiculos.ToListAsync());
         }
 
         // GET: api/Veiculos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Veiculo>> GetVeiculo(int id)
+        public async Task<ActionResult<Veiculo>> GetById(int id)
         {
-            var veiculo = await _context.Veiculos.Include(v => v.Consumos).FirstOrDefaultAsync(v => v.Id == id);
+            // include Consumos if needed
+            var veiculo = await _context.Veiculos
+                .FirstOrDefaultAsync(v => v.Id == id);
+
             if (veiculo == null)
             {
                 return NotFound();
             }
+
             return veiculo;
+        }
+
+        // POST: api/Veiculos
+        [HttpPost]
+        public async Task<ActionResult> Create(Veiculo veiculo)
+        {
+            if (veiculo.AnoFabricacao <= 0 || veiculo.AnoModelo <= 0)
+            {
+                return BadRequest(new {message = "Ano de Fabricação e Ano do Modelo são obrigatórios!"});
+            }
+
+            if (string.IsNullOrWhiteSpace(veiculo.Nome) || string.IsNullOrWhiteSpace(veiculo.Modelo) || string.IsNullOrWhiteSpace(veiculo.Placa))
+            {
+                return BadRequest(new {message = "Nome, Modelo e Placa são obrigatórios!"});
+            }
+            _context.Veiculos.Add(veiculo);
+            await _context.SaveChangesAsync();
+            //return CreatedAtAction(nameof(GetById), new { id = veiculo.Id }, veiculo);
+            return CreatedAtAction("Create", veiculo);
         }
     }
 }

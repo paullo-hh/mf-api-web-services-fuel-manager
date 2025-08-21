@@ -10,10 +10,10 @@ namespace mf_api_web_services_fuel_manager.Models
         public int Id { get; set; }
         
         [Required]
-        public String Nome { get; set; }
+        public string Nome { get; set; }
 
         [Required]
-        public String Modelo { get; set; }
+        public string Modelo { get; set; }
 
         [Required]
         public string Placa { get; set; }
