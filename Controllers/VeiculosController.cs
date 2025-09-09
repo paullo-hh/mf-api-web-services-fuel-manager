@@ -3,35 +3,29 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace mf_api_web_services_fuel_manager.Controllers
-{
+namespace mf_api_web_services_fuel_manager.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class VeiculosController : ControllerBase
-    {
+    public class VeiculosController : ControllerBase {
         private readonly AppDbContext _context;
-        public VeiculosController(AppDbContext context)
-        {
+        public VeiculosController(AppDbContext context) {
             _context = context;
         }
 
         // GET: api/Veiculos
         [HttpGet]
-        public async Task<ActionResult> GetAll()
-        {
+        public async Task<ActionResult> GetAll() {
             return Ok(await _context.Veiculos.ToListAsync());
         }
 
         // GET: api/Veiculos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Veiculo>> GetById(int id)
-        {
+        public async Task<ActionResult<Veiculo>> GetById(int id) {
             // include Consumos if needed
             var veiculo = await _context.Veiculos
                 .FirstOrDefaultAsync(v => v.Id == id);
 
-            if (veiculo == null)
-            {
+            if (veiculo == null) {
                 return NotFound();
             }
 
@@ -40,16 +34,13 @@ namespace mf_api_web_services_fuel_manager.Controllers
 
         // POST: api/Veiculos
         [HttpPost]
-        public async Task<ActionResult> Create(Veiculo veiculo)
-        {
-            if (veiculo.AnoFabricacao <= 0 || veiculo.AnoModelo <= 0)
-            {
-                return BadRequest(new {message = "Ano de Fabricação e Ano do Modelo são obrigatórios!"});
+        public async Task<ActionResult> Create(Veiculo veiculo) {
+            if (veiculo.AnoFabricacao <= 0 || veiculo.AnoModelo <= 0) {
+                return BadRequest(new { message = "Ano de Fabricação e Ano do Modelo são obrigatórios!" });
             }
 
-            if (string.IsNullOrWhiteSpace(veiculo.Nome) || string.IsNullOrWhiteSpace(veiculo.Modelo) || string.IsNullOrWhiteSpace(veiculo.Placa))
-            {
-                return BadRequest(new {message = "Nome, Modelo e Placa são obrigatórios!"});
+            if (string.IsNullOrWhiteSpace(veiculo.Nome) || string.IsNullOrWhiteSpace(veiculo.Modelo) || string.IsNullOrWhiteSpace(veiculo.Placa)) {
+                return BadRequest(new { message = "Nome, Modelo e Placa são obrigatórios!" });
             }
             _context.Veiculos.Add(veiculo);
             await _context.SaveChangesAsync();
@@ -60,23 +51,22 @@ namespace mf_api_web_services_fuel_manager.Controllers
         // PUT: api/Veiculos/5
         [HttpPut("{id}")]
         public
-            async Task<ActionResult> Update(int id, Veiculo veiculo)
-        {
-            if (id != veiculo.Id) return BadRequest(new { message = "Veículo não encontrado!"});
+            async Task<ActionResult> Update(int id, Veiculo veiculo) {
+            if (id != veiculo.Id)
+                return BadRequest(new { message = "Veículo não encontrado!" });
 
-            if (veiculo.AnoFabricacao <= 0 || veiculo.AnoModelo <= 0)
-            {
-                return BadRequest(new {message = "Ano de Fabricação e Ano do Modelo são obrigatórios!"});
+            if (veiculo.AnoFabricacao <= 0 || veiculo.AnoModelo <= 0) {
+                return BadRequest(new { message = "Ano de Fabricação e Ano do Modelo são obrigatórios!" });
             }
 
-            if (string.IsNullOrWhiteSpace(veiculo.Nome) || string.IsNullOrWhiteSpace(veiculo.Modelo) || string.IsNullOrWhiteSpace(veiculo.Placa))
-            {
-                return BadRequest(new {message = "Nome, Modelo e Placa são obrigatórios!"});
+            if (string.IsNullOrWhiteSpace(veiculo.Nome) || string.IsNullOrWhiteSpace(veiculo.Modelo) || string.IsNullOrWhiteSpace(veiculo.Placa)) {
+                return BadRequest(new { message = "Nome, Modelo e Placa são obrigatórios!" });
             }
 
             var veiculoExistent = await _context.Veiculos.AsNoTracking().FirstOrDefaultAsync(v => v.Id == id);
 
-            if (veiculoExistent == null) return NotFound(new {message = "Veículo não encontrado!"});
+            if (veiculoExistent == null)
+                return NotFound(new { message = "Veículo não encontrado!" });
 
             _context.Veiculos.Update(veiculo);
             await _context.SaveChangesAsync();
@@ -85,13 +75,11 @@ namespace mf_api_web_services_fuel_manager.Controllers
 
         // DELETE: api/Veiculos/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
-        {
+        public async Task<ActionResult> Delete(int id) {
             var veiculo = await _context.Veiculos
                 .FindAsync(id);
 
-            if (veiculo == null)
-            {
+            if (veiculo == null) {
                 return NotFound(new { message = "Veículo não encontrado!" });
             }
 
