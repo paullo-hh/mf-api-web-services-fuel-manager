@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace mf_api_web_services_fuel_manager.Models
-{
+namespace mf_api_web_services_fuel_manager.Models {
     [Table("Consumos")]
-    public class Consumo
-    {
+    public class Consumo {
         [Key]
         public int Id { get; set; }
 
@@ -28,8 +26,8 @@ namespace mf_api_web_services_fuel_manager.Models
         public Veiculo Veiculo { get; set; }
     }
 
-    public enum TipoCombustivel
-    {
+    public enum TipoCombustivel {
+        Nenhum,
         Etanol,
         Gasolina,
         Diesel

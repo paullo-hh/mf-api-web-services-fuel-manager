@@ -1,35 +1,61 @@
-﻿using mf_api_web_services_fuel_manager.Models;
-using Microsoft.AspNetCore.Http;
+﻿using mf_api_web_services_fuel_manager.DTOs;
+using mf_api_web_services_fuel_manager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace mf_api_web_services_fuel_manager.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class VeiculosController : ControllerBase {
-        private readonly AppDbContext _context;
-        public VeiculosController(AppDbContext context) {
-            _context = context;
-        }
+    public class VeiculosController(AppDbContext context) : ControllerBase {
+        private readonly AppDbContext _context = context;
 
         // GET: api/Veiculos
         [HttpGet]
-        public async Task<ActionResult> GetAll() {
-            return Ok(await _context.Veiculos.ToListAsync());
+        public async Task<ActionResult<VeiculoDTO>> GetAll() {
+            var veiculos = await _context.Veiculos
+                .Include(c => c.Consumos)
+                .ToListAsync();
+
+            var veiculosDto = veiculos.Select(v => new VeiculoDTO
+            { 
+                Id = v.Id,
+                Nome = v.Nome,
+                Consumos = v.Consumos.Select(c => new ConsumoDTO {
+                    Id = c.Id,
+                    Descricao = c.Descricao,
+                    Data = c.Data,
+                    Valor = c.Valor,
+                    Tipo = c.Tipo
+                }).ToList()
+            }).ToList();
+
+            return Ok(veiculosDto);
         }
 
         // GET: api/Veiculos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Veiculo>> GetById(int id) {
-            // include Consumos if needed
+        public async Task<ActionResult<VeiculoDTO>> GetById(int id) {
             var veiculo = await _context.Veiculos
+                .Include(c => c.Consumos)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (veiculo == null) {
                 return NotFound();
             }
 
-            return veiculo;
+            var veiculosDto = new VeiculoDTO {
+                Id = veiculo.Id,
+                Nome = veiculo.Nome,
+                Consumos = veiculo.Consumos.Select(c => new ConsumoDTO {
+                    Id = c.Id,
+                    Descricao = c.Descricao,
+                    Data = c.Data,
+                    Valor = c.Valor,
+                    Tipo = c.Tipo
+                }).ToList()
+            };
+
+            return Ok(veiculosDto);
         }
 
         // POST: api/Veiculos
@@ -44,7 +70,6 @@ namespace mf_api_web_services_fuel_manager.Controllers {
             }
             _context.Veiculos.Add(veiculo);
             await _context.SaveChangesAsync();
-            //return CreatedAtAction(nameof(GetById), new { id = veiculo.Id }, veiculo);
             return CreatedAtAction("Create", veiculo);
         }
 
