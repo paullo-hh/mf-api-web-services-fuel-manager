@@ -54,6 +54,7 @@ namespace mf_api_web_services_fuel_manager.Controllers {
                 }).ToList()
             };
 
+            GerarLinks(veiculosDto);
             return Ok(veiculosDto);
         }
 
@@ -111,6 +112,12 @@ namespace mf_api_web_services_fuel_manager.Controllers {
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private void GerarLinks(VeiculoDTO veiculoDTO) {
+            veiculoDTO.Links.Add(new LinkDTO(veiculoDTO.Id, Url.ActionLink(), rel: "self", metodo: "GET"));
+            veiculoDTO.Links.Add(new LinkDTO(veiculoDTO.Id, Url.ActionLink(), rel: "update", metodo: "PUT"));
+            veiculoDTO.Links.Add(new LinkDTO(veiculoDTO.Id, Url.ActionLink(), rel: "delete", metodo: "DELETE"));
         }
     }
 }

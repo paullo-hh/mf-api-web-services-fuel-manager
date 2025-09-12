@@ -1,14 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using mf_api_web_services_fuel_manager.DTOs;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace mf_api_web_services_fuel_manager.Models
-{
+namespace mf_api_web_services_fuel_manager.Models {
     [Table("Veiculos")]
-    public class Veiculo
-    {
+    public class Veiculo {
         [Key]
         public int Id { get; set; }
-        
+
         [Required]
         public string Nome { get; set; }
 
@@ -17,7 +16,7 @@ namespace mf_api_web_services_fuel_manager.Models
 
         [Required]
         public string Placa { get; set; }
-        
+
         [Required]
         public int AnoFabricacao { get; set; }
 

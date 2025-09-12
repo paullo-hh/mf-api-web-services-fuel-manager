@@ -56,6 +56,7 @@ namespace mf_api_web_services_fuel_manager.Controllers {
                 VeiculoId = consumo.VeiculoId
             };
 
+            GerarLinks(consumoDto);
             return Ok(consumoDto);
         }
 
@@ -130,7 +131,7 @@ namespace mf_api_web_services_fuel_manager.Controllers {
             var _veiculo = await _context.Veiculos.FirstOrDefaultAsync(v => v.Id == consumo.VeiculoId);
 
             if (_veiculo == null) {
-                return NotFound(new { message = "Veículo não encontrado!" });                
+                return NotFound(new { message = "Veículo não encontrado!" });
             }
 
             _consumoExistente.Veiculo = _veiculo;
@@ -153,6 +154,12 @@ namespace mf_api_web_services_fuel_manager.Controllers {
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private void GerarLinks(ConsumoDetalhadoDTO consumoDetalhadoDTO) {
+            consumoDetalhadoDTO.Links.Add(new LinkDTO(consumoDetalhadoDTO.Id, Url.ActionLink(), rel: "self", metodo: "GET"));
+            consumoDetalhadoDTO.Links.Add(new LinkDTO(consumoDetalhadoDTO.Id, Url.ActionLink(), rel: "update", metodo: "PUT"));
+            consumoDetalhadoDTO.Links.Add(new LinkDTO(consumoDetalhadoDTO.Id, Url.ActionLink(), rel: "delete", metodo: "DELETE"));
         }
     }
 }
