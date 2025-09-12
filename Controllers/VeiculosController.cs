@@ -16,8 +16,7 @@ namespace mf_api_web_services_fuel_manager.Controllers {
                 .Include(c => c.Consumos)
                 .ToListAsync();
 
-            var veiculosDto = veiculos.Select(v => new VeiculoDTO
-            { 
+            var veiculosDto = veiculos.Select(v => new VeiculoDTO {
                 Id = v.Id,
                 Nome = v.Nome,
                 Consumos = v.Consumos.Select(c => new ConsumoDTO {
@@ -32,7 +31,7 @@ namespace mf_api_web_services_fuel_manager.Controllers {
             return Ok(veiculosDto);
         }
 
-        // GET: api/Veiculos/5
+        // GET: api/Veiculos/4
         [HttpGet("{id}")]
         public async Task<ActionResult<VeiculoDTO>> GetById(int id) {
             var veiculo = await _context.Veiculos
@@ -40,7 +39,7 @@ namespace mf_api_web_services_fuel_manager.Controllers {
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (veiculo == null) {
-                return NotFound();
+                return NotFound(new { message = "Veículo não encontrado!" });
             }
 
             var veiculosDto = new VeiculoDTO {
