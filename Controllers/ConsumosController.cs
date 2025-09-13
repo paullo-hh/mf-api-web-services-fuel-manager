@@ -18,7 +18,7 @@ namespace mf_api_web_services_fuel_manager.Controllers {
         public async Task<ActionResult> GetAll() {
             var consumos = await _context.Consumos.ToListAsync();
 
-            if (consumos == null || consumos.IsNullOrEmpty()) {
+            if (consumos == null) {
                 return NotFound(new { message = "Nenhum consumo encontrado!" });
             }
 
