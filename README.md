@@ -16,10 +16,10 @@ O Fuel Manager é um sistema que permite o gerenciamento de veículos e seus con
 ## 🏗️ Estrutura do Projeto
 
 ### Modelos de Dados
-- **Usuario**: Gerenciamento de usuários do sistema
-- **Veiculo**: Cadastro de veículos
-- **Consumo**: Registro de consumos de combustível
-- **VeiculoUsuario**: Relacionamento entre veículos e usuários
+- **Usuario**: Gerenciamento de usuários do sistema, com autenticação e perfil (Administrador ou Usuário).
+- **Veiculo**: Cadastro de veículos, contendo informações como nome, modelo, placa, ano de fabricação e ano do modelo. Cada veículo pode estar vinculado a um ou mais usuários.
+- **Consumo**: Registro de consumos de combustível, associado a um veículo. Inclui descrição, data, valor, tipo de combustível e referência ao veículo.
+- **VeiculoUsuario**: Relacionamento entre veículos e usuários, permitindo que um veículo seja compartilhado entre diferentes usuários.
 
 ### DTOs
 - **UsuarioDTO**: Objeto de transferência de dados para usuários
@@ -38,6 +38,13 @@ O Fuel Manager é um sistema que permite o gerenciamento de veículos e seus con
 - `PUT /{id}`: Atualiza um usuário existente
 - `DELETE /{id}`: Remove um usuário
 
+### Veículos (`/api/veiculos`)
+- `GET /`: Lista todos os veículos
+- `GET /{id}`: Obtém um veículo específico
+- `POST /`: Cadastra um novo veículo
+- `PUT /{id}`: Atualiza um veículo existente
+- `DELETE /{id}`: Remove um veículo
+
 ### Consumos (`/api/consumos`)
 - `GET /`: Lista todos os consumos
 - `GET /{id}`: Obtém um consumo específico
@@ -48,10 +55,13 @@ O Fuel Manager é um sistema que permite o gerenciamento de veículos e seus con
 ## 📝 Exemplos de Requisições
 
 ### Criar Usuário
-- POST `/api/usuarios { "nome": "João Silva", "password": "senha123", "perfil": "Usuario" }`
+- POST /api/usuarios `{ "nome": "João Silva", "password": "senha123", "perfil": "Usuario" }`
+
+### Criar Veículo
+- POST /api/veiculos `{ "nome": "Fiat Uno", "modelo": "Mille Fire", "placa": "ABC-1234", "anoFabricacao": 2010, "anoModelo": 2011 }`
 
 ### Registrar Consumo
-- POST `/api/consumos { "descricao": "Abastecimento Posto Shell", "data": "2025-09-13", "valor": 250.00, "tipo": "Gasolina", "veiculoId": 1 }`
+- POST /api/consumos `{ "descricao": "Abastecimento Posto Shell", "data": "2025-09-13", "valor": 250.00, "tipo": "Gasolina", "veiculoId": 1 }`
 
 ## 🔒 Segurança
 
@@ -73,6 +83,9 @@ O sistema utiliza SQL Server com as seguintes tabelas principais:
 - Nome obrigatório
 - Senha obrigatória
 - Perfil obrigatório
+
+### Veículos
+- Nome, modelo, placa, ano de fabricação e ano do modelo obrigatórios
 
 ### Consumos
 - Descrição obrigatória
