@@ -1,4 +1,5 @@
-﻿using mf_api_web_services_fuel_manager.Models;
+﻿using mf_api_web_services_fuel_manager.DTOs;
+using mf_api_web_services_fuel_manager.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,25 +22,32 @@ namespace mf_api_web_services_fuel_manager.Controllers {
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(Usuario usuario) {
+        public async Task<ActionResult> Create(UsuarioDTO usuarioDto) { 
             var result = new { message = "Usuário cadastrado com sucesso!" };
 
-            if (string.IsNullOrWhiteSpace(usuario.Nome)) {
+
+            if (string.IsNullOrWhiteSpace(usuarioDto.Nome)) {
                 return BadRequest(new { message = "O campo 'Nome' é obrigatório!" });
             }
 
-            if (string.IsNullOrWhiteSpace(usuario.Password)) {
+            if (string.IsNullOrWhiteSpace(usuarioDto.Password)) {
                 return BadRequest(new { message = "O campo 'Senha' é obrigatório!" });
             }
 
-            if (usuario.Perfil.Equals(null)) {
+            if (usuarioDto.Perfil.Equals(null)) {
                 return BadRequest(new { message = "O campo 'Perfil' é obrigatório!" });
             }
 
-            _context.Usuarios.Add(usuario);
+            Usuario _usuario = new Usuario() {
+                Nome = usuarioDto.Nome,
+                Password = BCrypt.Net.BCrypt.HashPassword(usuarioDto.Password),
+                Perfil = usuarioDto.Perfil
+            };
+
+            _context.Usuarios.Add(_usuario);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetById", new { id = usuario.Id }, result);
+            return CreatedAtAction("GetById", new { id = _usuario.Id }, result);
         }
 
         [HttpGet("{id}")]
@@ -53,8 +61,8 @@ namespace mf_api_web_services_fuel_manager.Controllers {
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, Usuario usuario) {
-            if (id != usuario.Id) return NotFound(new { message = "Usuário não identificado!" });
+        public async Task<ActionResult> Update(int id, UsuarioDTO usuarioDto) {
+            if (id != usuarioDto.Id) return BadRequest(new { message = "Usuário não identificado com o ID informado!" });
 
             var _usuarioExistente = await _context.Usuarios
                 .AsNoTracking()
@@ -75,7 +83,11 @@ namespace mf_api_web_services_fuel_manager.Controllers {
                 return BadRequest(new { message = "O campo 'Perfil' é obrigatório!" });
             }
 
-            _context.Usuarios.Update(usuario);
+            _usuarioExistente.Nome = usuarioDto.Nome;
+            _usuarioExistente.Password = BCrypt.Net.BCrypt.HashPassword(usuarioDto.Password);
+            _usuarioExistente.Perfil = usuarioDto.Perfil;
+            
+            _context.Usuarios.Update(_usuarioExistente);
             await _context.SaveChangesAsync();
 
             return NoContent();
